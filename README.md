@@ -81,14 +81,28 @@ To inference on a single image,run:
 python test_simple.py --image_path path/to/your/test/image --pretrained_path path/to/your/weights/folder --backbone LSM --height 192 --width 640 --save_npy
 ```
 ## Evaluation
-To evaluate a model on KITTI, run:
+To evaluate single-frame model on KITTI, run:
 ```bash
 CUDA_VISIBLE_DEVICES=0 python evaluate_depth.py \
+--pretrained_path path/to/your/weights/folder \
 --backbone LSM \
 --batch_size 16 \
 --width 640 \
 --height 192 \
 --kitti_path path/to/your/data \
 --make3d_path path/to/your/data \
+--cityscapes_path path/to/your/data \
+```
+To evaluate multi-frame model on KITTI, run:
+```bash
+CUDA_VISIBLE_DEVICES=0 python evaluate_depth_m.py \
+--pretrained_path path/to/your/weights/folder \
+--backbone LSM \
+--mdl_scale small \
+--training_data kitti \
+--batch_size 16 \
+--width 640 \
+--height 192 \
+--kitti_path path/to/your/data \
 --cityscapes_path path/to/your/data \
 ```
