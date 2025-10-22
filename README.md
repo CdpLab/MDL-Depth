@@ -52,6 +52,10 @@ This table compares the performance of our MDL-Depth model against state-of-the-
 ## Data Preparation
 Please refer to [Monodepth2](https://github.com/nianticlabs/monodepth2) to prepare your KITTI data.
 
+For Cityscapes dataset, we follow the instructions in [ManyDepth](https://github.com/nianticlabs/manydepth). We need to acquire two archives from the official Cityscapes website: `leftImg8bit_sequence_trainvaltest.zip` and `camera_trainvaltest.zip`. These downloaded files should then be extracted (unzipped) into a common destination folder, which we denote as `/path/to/cityscapes/`.
+
+For the Make3D dataset, the required files can be obtained by downloading them directly from the provided source [here](http://make3d.cs.cornell.edu/data.html#make3d).
+
 ## Install
 
 The models were trained using CUDA 11.8, Python 3.9.x (conda environment), and PyTorch 2.4.1.
