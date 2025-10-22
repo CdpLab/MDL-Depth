@@ -10,10 +10,10 @@
 ## Abstract
 To address the challenge of self-supervised monocular depth estimation experiencing severe performance degradation in real-world dynamic scenes due to violating the "static world assumption", this paper proposes a unified lightweight single-frame and multi-frame fusion architecture (MDL-Depth). To effectively mitigate interference from moving objects, the method is designed at both the data and loss levels. First, we incorporate a optical flow network to precisely capture pixel-level motion. Through explicit feature warping operations, reference frame features containing dynamic objects are aligned to the target frame's viewpoint, effectively compensating for the independent motion of objects prior to feature fusion. Second, we develop an adaptive loss masking strategy tailored for dynamic foregrounds. By analyzing reprojection errors between consecutive frames, we generate dynamic masks that actively identify and filter out erroneous gradient signals caused by motion mismatches. Experiments on challenging Cityscapes and KITTI datasets demonstrate that our method achieves high accuracy (AbsRel 0.91) in both dynamic and static regions. While ensuring high performance, the framework also prioritizes lightweight design. This provides an effective solution for efficient and precise depth estimation in complex dynamic environments.
 ## Overview
-<img src="./img/Figure_1.jpg" width="100%" alt="overview" align=center />
+<img src="./img/Figure_1.pdf" width="100%" alt="overview" align=center />
 
 ## Comparison of KITTI dataset visualizations
-<img src="./img/Figure_2.jpg" width="100%" alt="overview" align=center />
+<img src="./img/Figure_2.pdf" width="100%" alt="overview" align=center />
 
 ## Comparison of KITTI dataset results 
 | Model                                | Parameters (M) | AbsRel | SqRel | RMSE  | RMSElog | δ1   | δ2   | δ3   |
