@@ -1,224 +1,71 @@
 <div id="top" align="center">
   
-# MDL-Depth: A Unified Learning Framework for Self-supervised Single- and Multi-frame Monocular Depth Estimation
-<!-- **MDL-Depth: A Unified Learning Framework for Self-supervised Single- and Multi-frame Monocular Depth Estimation** -->
+# MDL-Depth 
+**Multi-frame-based Dynamic Scene Lightweight Self-Supervised Monocular Depth Estimation**
   
-  [Jinfeng Liu](https://scholar.google.com/citations?hl=en&user=-moPItwAAAAJ), [Lingtong Kong](https://scholar.google.com/citations?hl=zh-CN&user=KKzKc_8AAAAJ), [Bo Li](https://libraboli.github.io/), Zerong Wang, Hong Gu and Jinwei Chen
-
-  vivo Mobile Communication Co., Ltd
-
-  ECCV 2024   [[arxiv]](https://arxiv.org/abs/2407.14126)
-
-<!-- <p align="center">
-  <img src="assets/demo.gif" alt="example input output gif" width="450" />
-</p>
-BDEdepth (HRNet18 640x192 KITTI) -->
+  Jia Liu, Guorui Lu, Yiyang Wang, Lina Wei, Dapeng Chen*
+  
 </div>
 
-## Table of Contents
-- [Description](#description)
-- [Setup](#setup)
-- [Preparing datasets](#datasets)
-  - [KITTI](#kitti)
-  - [Make3D](#nm)
-  - [Cityscapes](#cityscapes)
-- [MDL Pre-training](#MDL)
-- [MDL-Depth Training](#training)
-- [Evaluation](#evaluation)
-  - [Evaluate with single-frame model](#single)
-  - [Evaluate with multi-frame model](#multi)
-- [Prediction](#prediction)
-  - [Prediction for a single image](#image)
-  - [Prediction for a video](#video)
-- [MDL-Depth Weights](#weights)
-- [Related Projects](#acknowledgement)
+## Abstract
+To address the challenge of self-supervised monocular depth estimation experiencing severe performance degradation in real-world dynamic scenes due to violating the "static world assumption", this paper proposes a unified lightweight single-frame and multi-frame fusion architecture (MDL-Depth). To effectively mitigate interference from moving objects, the method is designed at both the data and loss levels. First, we incorporate a optical flow network to precisely capture pixel-level motion. Through explicit feature warping operations, reference frame features containing dynamic objects are aligned to the target frame's viewpoint, effectively compensating for the independent motion of objects prior to feature fusion. Second, we develop an adaptive loss masking strategy tailored for dynamic foregrounds. By analyzing reprojection errors between consecutive frames, we generate dynamic masks that actively identify and filter out erroneous gradient signals caused by motion mismatches. Experiments on challenging Cityscapes and KITTI datasets demonstrate that our method achieves high accuracy (AbsRel 0.91) in both dynamic and static regions. While ensuring high performance, the framework also prioritizes lightweight design. This provides an effective solution for efficient and precise depth estimation in complex dynamic environments.
+## Overview
+<img src="./img/Figure_1.jpg" width="100%" alt="overview" align=center />
+
+## Comparison of KITTI dataset visualizations
+<img src="./img/Figure_2.jpg" width="100%" alt="overview" align=center />
+
+## Comparison of KITTI dataset results 
+| Model                                | Parameters (M) | AbsRel | SqRel | RMSE  | RMSElog | δ1   | δ2   | δ3   |
+|--------------------------------------|----------------|--------|-------|-------|---------|-------|-------|-------|
+| Zhou                                 | 34.2           | 0.208  | 1.768 | 6.958 | 0.283   | 0.678 | 0.885 | 0.957 |
+| SGDepth                              | 16.3           | 0.113  | 0.835 | 4.693 | 0.191   | 0.879 | 0.961 | 0.981 |
+| MonoFormer-ViT                       | 23.9           | 0.108  | 0.960 | 4.594 | 0.184   | 0.884 | 0.950 | 0.981 |
+| Monodepth2                           | 32.5           | 0.115  | 0.903 | 4.863 | 0.193   | 0.877 | 0.959 | 0.981 |
+| R-MSMF6                              | 3.8            | 0.120  | 1.062 | 5.800 | 0.204   | 0.857 | 0.948 | 0.978 |
+| Lite-Mono                            | 3.1            | 0.107  | 0.765 | 4.461 | 0.183   | 0.886 | 0.960 | 0.979 |
+| MonoViT-tiny                         | 10.3           | 0.106  | 0.749 | 4.484 | 0.183   | 0.888 | 0.961 | 0.980 |
+| HR-Depth                             | 14.7           | 0.109  | 0.792 | 4.632 | 0.185   | 0.884 | 0.959 | 0.979 |
+| Sc-depth3                            | 59.3           | 0.118  | 0.756 | 4.756 | 0.188   | 0.844 | 0.960 | 0.980 |
+| DNA-Depth-B0                         | 9.1            | 0.130  | 1.053 | 5.144 | 0.208   | 0.853 | 0.940 | 0.979 |
+| Bian                                 | 7.0            | 0.125  | 0.856 | 5.071 | 0.201   | 0.849 | 0.948 | 0.980 |
+| **Ours**                             | **3.0**        | **0.102** | **0.746** | **4.543** | **0.178** | **0.896** | **0.964** | **0.983** |
 
 
-## Description
-This is the official PyTorch implementation for MDL-Depth, which is built on the codebase of [BDEdepth](https://github.com/LiuJF1226/BDEdepth). If you find our work useful in your research, please consider citing our paper:
 
+## Data Preparation
+Please refer to [Monodepth2](https://github.com/nianticlabs/monodepth2) to prepare your KITTI data.
+
+## Install
+
+The models were trained using CUDA 11.8, Python 3.9.x (conda environment), and PyTorch 2.4.1.
+
+Create a conda environment with the PyTorch library:
+
+```bash
+conda create -n LSMDepth python=3.9.4
+conda install pytorch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1  pytorch-cuda=11.8 -c pytorch -c nvidia
+conda activate LSMDepth
 ```
-@misc{liu2024,
-      title={MDL-Depth: A Unified Learning Framework for Self-supervised Single- and Multi-frame Monocular Depth Estimation}, 
-      author={Jinfeng Liu and Lingtong Kong and Bo Li and Zerong Wang and Hong Gu and Jinwei Chen},
-      year={2024},
-      eprint={2407.14126},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2407.14126}, 
-}
-```
 
-
-
-## Setup
-Install the dependencies with:
-```shell
-pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0 --extra-index-url https://download.pytorch.org/whl/cu113
-
+Install prerequisite packages listed in requirements.txt:
+```bash
 pip install -r requirements.txt
 ```
 
-
-## <span id="datasets">Preparing datasets</span>
-### KITTI
-For KITTI dataset, you can prepare them as done in [Monodepth2](https://github.com/nianticlabs/monodepth2). Note that we directly train with the raw png images and do not convert them to jpgs. You also need to generate the groundtruth depth maps before training since the code will evaluate after each epoch. For the raw KITTI groundtruth (`eigen` eval split), run the following command. This will generate `gt_depths.npz` file in the folder `splits/kitti/eigen/`.
-```shell
-python export_gt_depth.py --data_path /home/datasets/kitti_raw_data --split eigen
-```
-For the improved KITTI groundtruth (`eigen_benchmark` eval split), please directly download it in this [link](https://www.dropbox.com/scl/fi/dg7eskv5ztgdyp4ippqoa/gt_depths.npz?rlkey=qb39aajkbhmnod71rm32136ry&dl=0). And then move the downloaded file (`gt_depths.npz`) to the folder `splits/kitti/eigen_benchmark/`.
-
-### <span id="nm">Make3D</span>
-
-For Make3D dataset, you can download it from [here](http://make3d.cs.cornell.edu/data.html#make3d).
-
-### Cityscapes
-For Cityscapes dataset, we follow the instructions in [ManyDepth](https://github.com/nianticlabs/manydepth). First Download `leftImg8bit_sequence_trainvaltest.zip` and `camera_trainvaltest.zip` in its [website](https://www.cityscapes-dataset.com/), and unzip them into a folder `/path/to/cityscapes/`. Then preprocess CityScapes dataset using the followimg command:
-```shell
-python prepare_cityscapes.py \
---img_height 512 \
---img_width 1024 \
---dataset_dir /path/to/cityscapes \
---dump_root /path/to/cityscapes_preprocessed \
---seq_length 3 \
---num_threads 8
-```
-Remember to modify `--dataset_dir` and `--dump_root` to your own path. The ground truth depth files are provided by ManyDepth in this [link](https://storage.googleapis.com/niantic-lon-static/research/manydepth/gt_depths_cityscapes.zip), which were converted from pixel disparities using intrinsics and the known baseline. Download it and unzip into `splits/cityscapes/`
-
-
-## <span id="MDL">MDL Pre-training</span>
-
-Download the following 6 checkpoints related to MDL in this [link](https://huggingface.co/Viollette/MDL-Depth/tree/main/MDL_weights):
-* small GMNet pretrained on Vimeo90K dataset : `GMNet_S_Vimeo90K.pth`
-* large GMNet pretrained on Vimeo90K dataset : `GMNet_L_Vimeo90K.pth`
-* small GMNet pretrained on KITTI dataset : `GMNet_S_KITTI.pth`
-* large GMNet pretrained on KITTI dataset : `GMNet_L_KITTI.pth`
-* small GMNet pretrained on Cityscapes dataset : `GMNet_S_CS.pth`
-* large GMNet pretrained on Cityscapes dataset : `GMNet_L_CS.pth`
-
-
-To save time, you can skip MDL pre-training and directly use our provided checkpoints. Just create a folder `MDL-Depth/weights/` and move `GMNet_S_KITTI.pth, GMNet_L_KITTI.pth, GMNet_S_CS.pth, GMNet_L_CS.pth` to this folder.
-
-If you want to train MDL models by yourself, move `GMNet_L_Vimeo90K.pth, GMNet_S_Vimeo90K.pth` to the folder `MDL-Depth/weights/`. We load Vimeo90K checkpoints to train on KITTI/Cityscapes. All the MDL training configs are in the folder `configs/mdl/`. For example,
-the command for training large GMNet on KITTI is:
-```shell
-### Training large GMNet on KITTI
-# single-gpu
-CUDA_VISIBLE_DEVICES=0 python train_mdl.py -c configs/mdl/GMNet_L_KITTI.txt
-
-# multi-gpu
-CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 train_mdl.py -c configs/mdl/GMNet_L_KITTI.txt
+## Training
+The models can be trained on the KITTI dataset by running:
+```bash
+python train.py --data_path path/to/your/data --model_name mymodel
 ```
 
-## <span id="training">MDL-Depth Training</span>
-Before training, move the 2 checkpoints downloaded from this [link](https://huggingface.co/Viollette/MDL-Depth/tree/main/ImageNet_weights) to the folder `MDL-Depth/weights/`:
-* HRNet18 backbone pretrained on ImageNet : `HRNet_W18_C_cosinelr_cutmix_300epoch.pth.tar`
-* LSM backbone pretrained on ImageNet : `lsm-pretrain.pth`
-
-You can refer to config files for the training settings/parameters/paths. All training configs are in the folders:
-* ResNet18 backbone : `configs/resnet18`
-* LSM backbone : `configs/LSM`
-
-Remember to modify related paths to your own. Take ResNet18 as an example, the training commands are as follows.
-
-Note: you can adjust `batch_size` in the config files according to your maximum GPU memory.
-
-```shell
-### Training with ResNet18 backbone (KITTI, 640x192)
-# single-gpu
-CUDA_VISIBLE_DEVICES=0 python train.py -c configs/resnet18/ResNet18_KITTI_MR.txt
-
-# multi-gpu
-CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 train.py -c configs/resnet18/ResNet18_KITTI_MR.txt
-
-
-### Training with ResNet18 backbone (KITTI, 1024x320)
-# For 1024x320 resolution, we load 640x192 model and train for 5 epoches with 1e-5 learning rate.
-CUDA_VISIBLE_DEVICES=0 python train.py -c configs/resnet18/ResNet18_KITTI_HR.txt
-
-
-### Training with ResNet18 backbone (Cityscapes, 512x192)
-CUDA_VISIBLE_DEVICES=0 python train.py -c configs/resnet18/ResNet18_CS.txt
+## Inference
+To inference on a single image,run:
+```bash
+python test_simple.py --load_weights_folder path/to/your/weights/folder --image_path path/to/your/test/image
 ```
-
-
 ## Evaluation
-### <span id="single">Evaluate with single-frame model</span>
-```shell
-### KITTI 640x192 model, ResNet18
-
-CUDA_VISIBLE_DEVICES=0 python evaluate_depth.py \
---pretrained_path our_models/ResNet18_KITTI_MR.pth \
---backbone ResNet18 \
---batch_size 16 \
---width 640 \
---height 192 \
---kitti_path /data/juicefs_sharing_data/public_data/Datasets/KITTI/kitti_raw_data \
---make3d_path /data/juicefs_sharing_data/public_data/Datasets/make3d \
---cityscapes_path /data/juicefs_sharing_data/public_data/Datasets/cityscapes \
-# --post_process
+To evaluate a model on KITTI, run:
+```bash
+python evaluate_depth.py --load_weights_folder path/to/your/weights/folder --data_path path/to/kitti_data/ --model lite-mono
 ```
-This script will evaluate on KITTI (both raw and improved GT), Make3D and Cityscapes together. If you don't want to evaluate on some of these datasets, for example KITTI, just do not specify the corresponding `--kitti_path` flag. It will only evaluate on the datasets which you have specified a path flag.
-
-If you want to evalute with post-processing, add the `--post_process` flag (disabled by default).
-
-### <span id="multi">Evaluate with multi-frame model</span>
-```shell
-### KITTI 640x192 model, ResNet18
-
-CUDA_VISIBLE_DEVICES=0 python evaluate_depth_mf.py \
---pretrained_path our_models/ResNet18_KITTI_MR.pth \
---backbone ResNet18 \
---mdl_scale small \
---training_data kitti \
---batch_size 16 \
---width 640 \
---height 192 \
---kitti_path /data/juicefs_sharing_data/public_data/Datasets/KITTI/kitti_raw_data \
---cityscapes_path /data/juicefs_sharing_data/public_data/Datasets/cityscapes \
-```
-
-## Prediction
-
-### <span id="image">Prediction for a single image (only single-frame model)</span>
-You can predict the disparity (inverse depth) for a single image with:
-
-```shell
-python test_simple.py --image_path folder/test_image.png --pretrained_path our_models/DHRNet_KITTI_MR.pth --backbone DHRNet --height 192 --width 640 --save_npy
-```
-
-The `--image_path` flag can also be a directory containing several images. In this setting, the script will predict all the images (use `--ext` to specify png or jpg) in the directory:
-
-```shell
-python test_simple.py --image_path folder --pretrained_path our_models/DHRNet_KITTI_MR.pth --backbone DHRNet --height 192 --width 640 --ext png --save_npy
-```
-
-### <span id="video">Prediction for a video (both single- and multi-frame model)</span>
-
-```shell
-python test_video.py --image_path folder --pretrained_path our_models/DHRNet_KITTI_MR.pth --backbone DHRNet --mdl_scale small --training_data kitti --height 192 --width 640 --ext png --save_npy
-```
-Here the `--image_path` flag should be a directory containing several video frames. Note that these video frame files should be named in an ascending numerical order. For example, the first frame is named as `0000.png`, the second frame is named as `0001.png`, and etc. This command will also output a GIF file.
-
-## <span id="weights">MDL-Depth Weights</span>
-We provide our pretrained weights of depth models in this [link](https://huggingface.co/Viollette/MDL-Depth/tree/main/Depth_weights), including 9 checkpoints:
-* ResNet18 backbone trained on KITTI with 640x192 : `ResNet18_KITTI_MR.pth`
-* ResNet18 backbone trained on KITTI with 1024x320 : `ResNet18_KITTI_HR.pth`
-* ResNet18 backbone trained on Cityscapes with 512x192 : `ResNet18_CS.pth`
-* LSM backbone trained on KITTI with 640x192 : `LSM_KITTI_MR.pth`
-* LSM backbone trained on KITTI with 1024x320 : `LSM_KITTI_HR.pth`
-* LSM backbone trained on Cityscapes with 512x192 : `LSM_CS.pth`
-* D-HRNet backbone trained on KITTI with 640x192 : `DHRNet_KITTI_MR.pth`
-* D-HRNet backbone trained on KITTI with 1024x320 : `DHRNet_KITTI_HR.pth`
-* D-HRNet backbone trained on Cityscapes with 512x192 : `DHRNet_CS.pth`
-
-Note that they are newly trained checkpoints whose evaluation indexes are slightly different from those reported in the paper.
-
-## <span id="acknowledgement">Related Projects</span>
-* [Monodepth2](https://github.com/nianticlabs/monodepth2) (ICCV 2019)
-* [ManyDepth](https://github.com/nianticlabs/manydepth) (CVPR 2021)
-* [LSM](https://github.com/noahzn/LSM) (CVPR 2023)
-* [PlaneDepth](https://github.com/svip-lab/PlaneDepth) (CVPR 2023)
-* [RA-Depth](https://github.com/hmhemu/RA-Depth) (ECCV 2022)
-* [BDEdepth](https://github.com/LiuJF1226/BDEdepth) (IEEE RA-L 2023)
-* [GMNet](https://github.com/ltkong218/GMNet) (CVPR 2022, our employed MDL model)
