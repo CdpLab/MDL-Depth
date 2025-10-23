@@ -1,7 +1,6 @@
 <div id="top" align="center">
   
-# MDL-Depth 
-**Multi-frame-based Dynamic Scene Lightweight Self-Supervised Monocular Depth Estimation**
+# Multi-frame-based Dynamic Scene Lightweight Self-Supervised Monocular Depth Estimation
   
   Jia Liu, Guorui Lu, Yiyang Wang, Lina Wei, Dapeng Chen*
   
