@@ -1,14 +1,14 @@
 <div id="top" align="center">
   
 # MDL-Depth 
-**Multi-frame-based Dynamic Scene Lightweight Self-Supervised Monocular Depth Estimation**
+**Lightweight Self-supervised Monocular Depth Estimation for Dynamic Scenes based on Multiple Frames**
   
   Jia Liu, Guorui Lu, Yiyang Wang, Lina Wei, Dapeng Chen*
   
 </div>
 
 ## Abstract
-To address the challenge of self-supervised monocular depth estimation experiencing severe performance degradation in real-world dynamic scenes due to violating the "static world assumption", this paper proposes a unified lightweight single-frame and multi-frame fusion architecture (MDL-Depth). To effectively mitigate interference from moving objects, the method is designed at both the data and loss levels. First, we incorporate a optical flow network to precisely capture pixel-level motion. Through explicit feature warping operations, reference frame features containing dynamic objects are aligned to the target frame's viewpoint, effectively compensating for the independent motion of objects prior to feature fusion. Second, we develop an adaptive loss masking strategy tailored for dynamic foregrounds. By analyzing reprojection errors between consecutive frames, we generate dynamic masks that actively identify and filter out erroneous gradient signals caused by motion mismatches. Experiments on challenging Cityscapes and KITTI datasets demonstrate that our method achieves high accuracy (AbsRel 0.091) in both dynamic and static regions. While ensuring high performance, the framework also prioritizes lightweight design. This provides an effective solution for efficient and precise depth estimation in complex dynamic environments.
+To address the challenge of self-supervised monocular depth estimation experiencing severe performance degradation in real-world dynamic scenes due to violating the ``static world assumption'', this paper proposes a unified lightweight single-frame and multiple-frame fusion architecture. To effectively mitigate interference from moving objects, the method is designed at both the data and loss levels. First, we incorporate a optical flow network to precisely capture pixel-level motion. Through explicit feature warping operations, reference frame features containing dynamic objects are aligned to the target frame's viewpoint, effectively compensating for the independent motion of objects prior to feature fusion. Second, we develop an adaptive loss masking strategy tailored for dynamic foregrounds. By analyzing reprojection errors between consecutive frames, we generate dynamic masks that actively identify and filter out erroneous gradient signals caused by motion mismatches. Experiments on two challenging benchmark datasets demonstrate that our method achieves high accuracy in both dynamic and static regions. While ensuring high performance, the framework also prioritizes lightweight design. This provides an effective solution for efficient and precise depth estimation in complex dynamic environments.
 ## Overview
 <img src="./img/Figure_1.png" width="100%" alt="overview" align=center />
 <p align="center"><strong>The overall structural framework of the proposed lightweight depth estimation method MDL-Depth.</strong></p>
@@ -36,7 +36,8 @@ This table compares the performance of our MDL-Depth model against state-of-the-
 | DACCN | 1 | 13 | 0.099 | 0.661 | 4.316 | 0.173 | 0.897 | 0.967 | 0.985 |
 | Jaeho | 1 | 24.7 | 0.096 | 0.696 | 4.327 | 0.174 | **0.904** | **0.968** | **0.985** |
 | LAM-Depth | 1 | — | 0.109 | 0.789 | 4.670 | 0.186 | **0.881** | **0.961** | **0.983** |
-| BOFSCD | 1 | — | 0.119 | 0.753 | 4.754 | 0.189 | **0.859** | **0.960** | **0.984** |
+| Elton | 1 | — | 0.115 | 0.753 | 4.593 | 0.183 | **0.869** | **0.963** | **0.985** |
+| MPRLNet | 1 | 8.43 | 0.104 | 0.705 | 4.455 | 0.179 | **0.891** | **0.965** | **0.984** |
 | **MDL-Depth(Single)** | **1** | **3.0** | 0.098 | **0.646** | **4.235** | 0.174 | **0.904** | **0.968** | **0.985** |
 | **---** | **---** | **---** | **---** | **---** | **---** | **---** | **---** | **---** | **---** |
 | DepthFormer | 2 | 28.7 | 0.090 | 0.661 | 4.149 | 0.175 | 0.905 | 0.967 | 0.984 |
