@@ -1,7 +1,8 @@
 <div id="top" align="center">
   
 # Dynamic scene self-supervised monocular depth estimation based on multi-branch collaborative optimization
-  
+<p align="center">Jia Liu, Guorui Lu, Yiyang Wang, Lina Wei and Dapeng Chen*</p>
+<p align="center">Nanjing University of Information Science and Technology</p>
 
 ---
 ## <p align="center">ABSTRACT</p>
